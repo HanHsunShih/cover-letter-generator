@@ -1,0 +1,17 @@
+@use "./mixin" as *;
+@use "./typography" as *;
+@use "./variables" as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button {
+  cursor: pointer;
+}
+
+body {
+  background-color: $color1;
+}

@@ -1,0 +1,8 @@
+@use "../src/styles/_partials/mixin" as *;
+@use "../src/styles/_partials/typography" as *;
+@use "../src/styles/_partials/variables" as *;
+@use "../src/styles/_partials/resets" as *;
+
+.main {
+  background-color: $color1;
+}
