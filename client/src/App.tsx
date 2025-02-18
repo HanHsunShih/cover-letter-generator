@@ -1,5 +1,6 @@
 // import { useState } from "react";
 import "./App.scss";
+import docImg from "../src/assets/images/doc.png";
 
 function App() {
   return (
@@ -36,8 +37,13 @@ function App() {
         </form>
 
         <div className="download-section">
-          <p>Download Word File</p>
-          <div className="download-icon"></div>
+          <h3>Download Word File</h3>
+          <img
+            src={docImg}
+            alt="word file image"
+            className="download-section__img"
+          />
+          {/* <div className="download-icon"></div> */}
         </div>
       </div>
     </>

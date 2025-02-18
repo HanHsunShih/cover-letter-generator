@@ -105,6 +105,14 @@
   text-align: center;
   margin-top: 2rem;
 
+  &__img {
+    width: 4rem;
+
+    &:active {
+      width: 3.8rem;
+    }
+  }
+
   .download-icon {
     width: 4rem;
     height: 4rem;

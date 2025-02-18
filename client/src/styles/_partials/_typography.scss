@@ -1,0 +1,31 @@
+@font-face {
+  font-family: "RokkittBold";
+  src: url("../../../src/assets/fonts/Rokkitt-Bold.ttf") format("truetype");
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "RokkittLight";
+  src: url("../../../src/assets/fonts/Rokkitt-Light.ttf") format("truetype");
+  font-weight: lighter;
+}
+
+h1 {
+  font-family: "RokkittBold", sans-serif;
+}
+
+h3 {
+  font-family: "RokkittBold", sans-serif;
+}
+
+p {
+  font-family: "RokkittLight", sans-serif;
+}
+
+label {
+  font-family: "RokkittLight", sans-serif;
+}
+
+button {
+  font-family: "RokkittLight", sans-serif;
+}

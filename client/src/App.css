@@ -1,0 +1,148 @@
+@font-face {
+  font-family: "RokkittBold";
+  src: url("../../../src/assets/fonts/Rokkitt-Bold.ttf") format("truetype");
+  font-weight: bold;
+}
+@font-face {
+  font-family: "RokkittLight";
+  src: url("../../../src/assets/fonts/Rokkitt-Light.ttf") format("truetype");
+  font-weight: lighter;
+}
+h1 {
+  font-family: "RokkittBold", sans-serif;
+}
+
+h3 {
+  font-family: "RokkittBold", sans-serif;
+}
+
+p {
+  font-family: "RokkittLight", sans-serif;
+}
+
+label {
+  font-family: "RokkittLight", sans-serif;
+}
+
+button {
+  font-family: "RokkittLight", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button {
+  cursor: pointer;
+}
+
+body {
+  background-color: #89e5ff;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+}
+
+.header {
+  text-align: center;
+}
+.header__title {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.form {
+  background-color: #fee01b;
+  width: 25rem;
+  padding: 2rem;
+  border-radius: 30px;
+  border: 3px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 4px 4px 0px black;
+}
+.form .form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+.form .form-group__label {
+  font-size: 1rem;
+  font-weight: bold;
+}
+.form .form-group__input {
+  width: 80%;
+  height: 2rem;
+  border: 2px solid black;
+  border-radius: 10px;
+  padding: 0.5rem;
+}
+.form .form-group__file-input {
+  display: none;
+}
+.form .form-group__file-label {
+  display: inline-block;
+  width: 10rem;
+  padding: 0.5rem;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px black;
+}
+.form .form-group__file-label:hover {
+  background-color: black;
+  color: white;
+}
+.form .form-group__file-label:active {
+  transform: translateY(3px);
+  box-shadow: 1px 1px 0px black;
+}
+.form .form-group__button {
+  width: 10rem;
+  padding: 0.5rem;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 10px;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px black;
+}
+.form .form-group__button:hover {
+  background-color: black;
+  color: white;
+}
+.form .form-group__button:active {
+  transform: translateY(3px);
+  box-shadow: 1px 1px 0px black;
+}
+
+.download-section {
+  text-align: center;
+  margin-top: 2rem;
+}
+.download-section__img {
+  width: 4rem;
+}
+.download-section__img:active {
+  width: 3.8rem;
+}
+.download-section .download-icon {
+  width: 4rem;
+  height: 4rem;
+  border: 2px solid black;
+  border-radius: 10px;
+  margin: auto;
+  box-shadow: 3px 3px 0px black;
+}/*# sourceMappingURL=App.css.map */
