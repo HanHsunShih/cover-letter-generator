@@ -12,7 +12,7 @@ function App() {
         <form action="" className="form">
           <div className="form-group">
             <label htmlFor="link" className="form-group__label">
-              Job Posting URL
+              Paste Job Description
             </label>
             <input type="text" name="link" className="form-group__input" />
 
