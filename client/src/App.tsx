@@ -1,8 +1,23 @@
 // import { useState } from "react";
 import "./App.scss";
-import docImg from "../src/assets/images/doc.png";
+import docImg from "./assets/images/doc.png";
+import { getOpenAIResponse } from "../utils/apiUtils";
+import { useState } from "react";
 
 function App() {
+  const [result, setResult] = useState("");
+
+  const responseRender = async () => {
+    try {
+      const response = await getOpenAIResponse();
+      setResult(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClick = () => {};
+
   return (
     <>
       <div className="container">

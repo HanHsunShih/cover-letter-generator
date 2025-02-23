@@ -2,17 +2,19 @@
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "nodemon --exec ts-node src/server.ts"
+    "dev": "nodemon dist/server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@openai/openai": "npm:@jsr/openai__openai@^4.85.4",
     "@types/node": "^22.13.4",
     "axios": "^1.7.9",
     "cors": "^2.8.5",
@@ -21,6 +23,7 @@
     "knex": "^3.1.0",
     "mysql2": "^3.12.0",
     "nodemon": "^3.1.9",
+    "openai": "^4.85.4",
     "playwright": "^1.50.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
