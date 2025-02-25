@@ -9,6 +9,7 @@ function App() {
   const [result, setResult] = useState("");
   const jdInput = useRef<HTMLInputElement>(null);
   const [jdErrorMessage, setJdErrorMessage] = useState("");
+  const apiUrl = import.meta.env.VITE_SERVER_URL;
 
   const responseRender = async () => {
     try {
@@ -26,14 +27,19 @@ function App() {
   console.log("result: ");
   console.log(result);
 
-  const handleSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
       event.preventDefault();
 
       if (!jdInput.current?.value.trim()) {
         setJdErrorMessage("Please paste job description");
+        return;
       } else {
-        // axios.
+        console.log("jdInput.current.value: ");
+        console.log(jdInput.current.value);
+        await axios.post(`${apiUrl}/openai`, {
+          jobDescription: jdInput.current.value,
+        });
       }
     } catch (error) {
       console.log(error);
