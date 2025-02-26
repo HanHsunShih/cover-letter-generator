@@ -27,8 +27,12 @@ app.get("/", (req, res) => {
 app.post("/openai", async (req: Request, res: Response) => {
   const { jobDescription } = req.body;
 
+  console.log("jobDescription: ");
+  console.log(jobDescription);
+
   if (!jobDescription) {
     res.status(400).json({ error: "Job description is required" });
+    return;
   }
 
   try {

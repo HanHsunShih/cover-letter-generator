@@ -2,7 +2,7 @@
 import "./App.scss";
 import axios from "axios";
 import docImg from "./assets/images/doc.png";
-import { getOpenAIResponse } from "../utils/apiUtils";
+// import { getOpenAIResponse } from "../utils/apiUtils";
 import { useEffect, useRef, useState } from "react";
 
 function App() {
@@ -11,21 +11,18 @@ function App() {
   const [jdErrorMessage, setJdErrorMessage] = useState("");
   const apiUrl = import.meta.env.VITE_SERVER_URL;
 
-  const responseRender = async () => {
-    try {
-      const response = await getOpenAIResponse();
-      setResult(response.content);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const responseRender = async () => {
+  //   try {
+  //     const response = await getOpenAIResponse();
+  //     setResult(response.content);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleJdOnChange = () => {
     setJdErrorMessage("");
   };
-
-  console.log("result: ");
-  console.log(result);
 
   const handleSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
@@ -35,20 +32,15 @@ function App() {
         setJdErrorMessage("Please paste job description");
         return;
       } else {
-        console.log("jdInput.current.value: ");
-        console.log(jdInput.current.value);
-        await axios.post(`${apiUrl}/openai`, {
+        const response = await axios.post(`${apiUrl}/openai`, {
           jobDescription: jdInput.current.value,
         });
+        setResult(response.data.content);
       }
     } catch (error) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    responseRender();
-  }, []);
 
   return (
     <>
@@ -91,6 +83,7 @@ function App() {
         </form>
 
         <div className="download-section">
+          {result && <p>{result}</p>}
           <h3>Download Word File</h3>
           <img
             src={docImg}
