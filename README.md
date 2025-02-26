@@ -1,6 +1,6 @@
 # Cover Letter Generator
 
-![Image](https://github.com/user-attachments/assets/c1c37569-5f7c-4542-b720-a92b51dd1690)
+<img width="635" alt="Image" src="https://github.com/user-attachments/assets/9f363460-80b3-43ed-aa55-a7d835f7e822" />
 
 ## About this project
 Recently I'm actively searching for a job and noticed many companies require a cover letter to showcase my passion and willingness to work with them. I always need to carefully read the job description, combine key points with my experience and passion, spending approximately 1 hour on each letter.
