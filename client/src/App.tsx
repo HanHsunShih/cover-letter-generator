@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 
 function App() {
   const [result, setResult] = useState("");
-  const jdInput = useRef<HTMLInputElement>(null);
+  const jdInput = useRef<HTMLTextAreaElement>(null);
   const [jdErrorMessage, setJdErrorMessage] = useState("");
   const [fileName, setFileName] = useState("");
   const apiUrl = import.meta.env.VITE_SERVER_URL;
@@ -50,13 +50,15 @@ function App() {
         </header>
         <form action="" className="form" onSubmit={handleSubmitForm}>
           <div className="form-group">
-            <label htmlFor="link" className="form-group__label">
+            <label htmlFor="jd" className="form-group__label">
               Paste Job Description
             </label>
-            <input
-              type="text"
-              name="link"
+            <textarea
+              name="jd"
+              rows={8}
+              cols={50}
               className="form-group__input"
+              placeholder="Paste Job Description here..."
               ref={jdInput}
               onChange={handleJdOnChange}
             />
