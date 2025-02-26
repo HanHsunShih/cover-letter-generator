@@ -9,16 +9,8 @@ function App() {
   const [result, setResult] = useState("");
   const jdInput = useRef<HTMLInputElement>(null);
   const [jdErrorMessage, setJdErrorMessage] = useState("");
+  const [fileName, setFileName] = useState("");
   const apiUrl = import.meta.env.VITE_SERVER_URL;
-
-  // const responseRender = async () => {
-  //   try {
-  //     const response = await getOpenAIResponse();
-  //     setResult(response.content);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   const handleJdOnChange = () => {
     setJdErrorMessage("");
@@ -42,6 +34,14 @@ function App() {
     }
   };
 
+  const handleselectedFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      setFileName(file.name);
+    }
+  };
+
   return (
     <>
       <div className="container">
@@ -61,20 +61,22 @@ function App() {
               onChange={handleJdOnChange}
             />
             {jdErrorMessage && (
-              <p className="form__errorMessage">{jdErrorMessage}</p>
+              <p className="form__error-message">{jdErrorMessage}</p>
             )}
             <label htmlFor="resumeSubmitted" className="form-group__label">
               Choose your CV from device
             </label>
             <label htmlFor="resumeSubmitted" className="form-group__file-label">
-              Choose file
+              {fileName ? `Change File` : `Choose file`}
             </label>
+            {fileName && <p className="form__file-name">Your CV: {fileName}</p>}
             <input
               type="file"
               name="resumeSubmitted"
               id="resumeSubmitted"
               className="form-group__file-input"
               accept="application/pdf"
+              onChange={handleselectedFile}
             />
             <button type="submit" className="form-group__button">
               Generate

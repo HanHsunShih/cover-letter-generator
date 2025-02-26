@@ -42,7 +42,8 @@ app.post("/openai", async (req: Request, res: Response) => {
         { role: "system", content: "You are a helpful HR assistant." },
         {
           role: "user",
-          content: `Tell me the position title and company name of this job description: ${jobDescription}`,
+          content: `Use this job description: ${jobDescription},  answer the questions follow the format: Company’s name:
+, Position:`,
         },
       ],
     });
