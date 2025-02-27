@@ -46,13 +46,13 @@ function App() {
   ) => {
     const content = await GetPdfContent(src);
     const items = content.items.map((item: pdfjsLib.TextItem) => {
+      // console.log("item.str: ");
       console.log(item.str);
+      return item.str;
     });
 
     return items;
   };
-
-  // getPdfItem(pdfExample);
 
   const handleSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
@@ -63,15 +63,34 @@ function App() {
         setJdErrorMessage("Please paste job description");
         hasError = true;
       }
-      if (!cvInput.current?.value) {
+      if (!cvInput.current?.files?.[0]) {
         setCvErrorMessage("Please upload your resume as a PDF file");
         hasError = true;
       }
 
       if (hasError) return;
 
+      const file = cvInput.current?.files?.[0];
+      const reader = new FileReader();
+
+      reader.onload = async (event) => {
+        const arrayBuffer = event.target?.result as ArrayBuffer;
+
+        // await getPdfItem(arrayBuffer);
+
+        const extractedText = await getPdfItem(arrayBuffer);
+        console.log("Extracted text:", extractedText);
+      };
+
+      if (!file) {
+        setCvErrorMessage("Please upload your resume as a PDF file");
+        return;
+      }
+
+      reader.readAsArrayBuffer(file);
+
       const jdResponse = await axios.post(`${apiUrl}/openai`, {
-        jobDescription: jdInput.current.value,
+        jobDescription: jdInput.current?.value,
       });
       setResult(jdResponse.data.content);
     } catch (error) {
@@ -84,6 +103,7 @@ function App() {
 
     if (file) {
       setFileName(file.name);
+      setCvErrorMessage("");
     }
   };
 
@@ -119,7 +139,7 @@ function App() {
             {cvErrorMessage && (
               <p className="form__error-message">{cvErrorMessage}</p>
             )}
-            {fileName && <p className="form__file-name">Your CV: {fileName}</p>}
+            {fileName && <p className="form__file-name">{fileName}</p>}
             <input
               type="file"
               name="resumeSubmitted"
