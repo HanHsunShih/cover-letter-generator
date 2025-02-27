@@ -13,7 +13,9 @@ import pdfExample from "./assets/pdf-example.pdf";
 function App() {
   const [result, setResult] = useState("");
   const jdInput = useRef<HTMLTextAreaElement>(null);
+  const cvInput = useRef<HTMLInputElement>(null);
   const [jdErrorMessage, setJdErrorMessage] = useState("");
+  const [cvErrorMessage, setCvErrorMessage] = useState("");
   const [fileName, setFileName] = useState("");
   const apiUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -34,7 +36,7 @@ function App() {
     return await page.getTextContent();
   };
 
-  const getItem = async (
+  const getPdfItem = async (
     src:
       | string
       | Uint8Array
@@ -50,21 +52,28 @@ function App() {
     return items;
   };
 
-  getItem(pdfExample);
+  // getPdfItem(pdfExample);
 
   const handleSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
       event.preventDefault();
+      let hasError = false;
 
       if (!jdInput.current?.value.trim()) {
         setJdErrorMessage("Please paste job description");
-        return;
-      } else {
-        const jdResponse = await axios.post(`${apiUrl}/openai`, {
-          jobDescription: jdInput.current.value,
-        });
-        setResult(jdResponse.data.content);
+        hasError = true;
       }
+      if (!cvInput.current?.value) {
+        setCvErrorMessage("Please upload your resume as a PDF file");
+        hasError = true;
+      }
+
+      if (hasError) return;
+
+      const jdResponse = await axios.post(`${apiUrl}/openai`, {
+        jobDescription: jdInput.current.value,
+      });
+      setResult(jdResponse.data.content);
     } catch (error) {
       console.log(error);
     }
@@ -107,6 +116,9 @@ function App() {
             <label htmlFor="resumeSubmitted" className="form-group__file-label">
               {fileName ? `Change File` : `Choose file`}
             </label>
+            {cvErrorMessage && (
+              <p className="form__error-message">{cvErrorMessage}</p>
+            )}
             {fileName && <p className="form__file-name">Your CV: {fileName}</p>}
             <input
               type="file"
@@ -115,6 +127,7 @@ function App() {
               className="form-group__file-input"
               accept="application/pdf"
               onChange={handleSelectedFile}
+              ref={cvInput}
             />
             <button type="submit" className="form-group__button">
               Generate
