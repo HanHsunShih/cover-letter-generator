@@ -4,6 +4,11 @@ import axios from "axios";
 import docImg from "./assets/images/doc.png";
 // import { getOpenAIResponse } from "../utils/apiUtils";
 import { useEffect, useRef, useState } from "react";
+// @ts-ignore
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
+// @ts-ignore
+import "pdfjs-dist/legacy/build/pdf.worker";
+import pdfExample from "./assets/pdf-example.pdf";
 
 function App() {
   const [result, setResult] = useState("");
@@ -16,6 +21,37 @@ function App() {
     setJdErrorMessage("");
   };
 
+  const GetPdfContent = async (
+    src:
+      | string
+      | Uint8Array
+      | ArrayBuffer
+      | pdfjsLib.PDFDataRangeTransport
+      | pdfjsLib.DocumentInitParameters
+  ) => {
+    const doc = await pdfjsLib.getDocument(src).promise;
+    const page = await doc.getPage(1);
+    return await page.getTextContent();
+  };
+
+  const getItem = async (
+    src:
+      | string
+      | Uint8Array
+      | ArrayBuffer
+      | pdfjsLib.PDFDataRangeTransport
+      | pdfjsLib.DocumentInitParameters
+  ) => {
+    const content = await GetPdfContent(src);
+    const items = content.items.map((item: pdfjsLib.TextItem) => {
+      console.log(item.str);
+    });
+
+    return items;
+  };
+
+  getItem(pdfExample);
+
   const handleSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
       event.preventDefault();
@@ -24,17 +60,17 @@ function App() {
         setJdErrorMessage("Please paste job description");
         return;
       } else {
-        const response = await axios.post(`${apiUrl}/openai`, {
+        const jdResponse = await axios.post(`${apiUrl}/openai`, {
           jobDescription: jdInput.current.value,
         });
-        setResult(response.data.content);
+        setResult(jdResponse.data.content);
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleselectedFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelectedFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
     if (file) {
@@ -78,7 +114,7 @@ function App() {
               id="resumeSubmitted"
               className="form-group__file-input"
               accept="application/pdf"
-              onChange={handleselectedFile}
+              onChange={handleSelectedFile}
             />
             <button type="submit" className="form-group__button">
               Generate
