@@ -54,6 +54,19 @@ function App() {
     return items;
   };
 
+  const readFileAsText = (file: File): Promise<string[]> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const arrayBuffer = event.target?.result as ArrayBuffer;
+        const extractedText = await getPdfItem(arrayBuffer);
+        resolve(extractedText);
+      };
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
   const handleSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
       event.preventDefault();
@@ -63,36 +76,26 @@ function App() {
         setJdErrorMessage("Please paste job description");
         hasError = true;
       }
-      if (!cvInput.current?.files?.[0]) {
+
+      const file = cvInput.current?.files?.[0]; // ✅ 取得 `File`
+      if (!file) {
         setCvErrorMessage("Please upload your resume as a PDF file");
         hasError = true;
       }
 
       if (hasError) return;
 
-      const file = cvInput.current?.files?.[0];
-      const reader = new FileReader();
+      const cvResponse = await readFileAsText(file!); // ✅ 傳入 `file`
+      const extractText = cvResponse.join("");
+      console.log("Extract Text:");
+      console.log(extractText);
 
-      reader.onload = async (event) => {
-        const arrayBuffer = event.target?.result as ArrayBuffer;
-
-        // await getPdfItem(arrayBuffer);
-
-        const extractedText = await getPdfItem(arrayBuffer);
-        console.log("Extracted text:", extractedText);
-      };
-
-      if (!file) {
-        setCvErrorMessage("Please upload your resume as a PDF file");
-        return;
-      }
-
-      reader.readAsArrayBuffer(file);
-
-      const jdResponse = await axios.post(`${apiUrl}/openai`, {
+      const response = await axios.post(`${apiUrl}/openai`, {
         jobDescription: jdInput.current?.value,
+        cvContent: cvResponse,
       });
-      setResult(jdResponse.data.content);
+
+      setResult(response.data.content);
     } catch (error) {
       console.log(error);
     }
