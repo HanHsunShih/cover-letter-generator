@@ -1,5 +1,7 @@
 # Cover Letter Generator
 
+A bespoke AI-powered resume generator using React, Node.js, and OpenAI API, streamlining the job application process. Enabled automated PDF resume analysis and job description matching, generating tailored Word documents for seamless downloads.
+
 <img width="635" alt="Image" src="https://github.com/user-attachments/assets/9f363460-80b3-43ed-aa55-a7d835f7e822" />
 
 ## About this project
