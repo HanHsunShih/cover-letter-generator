@@ -77,7 +77,7 @@ function App() {
         hasError = true;
       }
 
-      const file = cvInput.current?.files?.[0]; // ✅ 取得 `File`
+      const file = cvInput.current?.files?.[0];
       if (!file) {
         setCvErrorMessage("Please upload your resume as a PDF file");
         hasError = true;
@@ -85,14 +85,14 @@ function App() {
 
       if (hasError) return;
 
-      const cvResponse = await readFileAsText(file!); // ✅ 傳入 `file`
+      const cvResponse = await readFileAsText(file!);
       const extractText = cvResponse.join("");
       console.log("Extract Text:");
       console.log(extractText);
 
       const response = await axios.post(`${apiUrl}/openai`, {
         jobDescription: jdInput.current?.value,
-        cvContent: cvResponse,
+        cvContent: extractText,
       });
 
       setResult(response.data.content);

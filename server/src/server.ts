@@ -26,6 +26,7 @@ app.get("/", (req, res) => {
 
 app.post("/openai", async (req: Request, res: Response) => {
   const { jobDescription } = req.body;
+  const { cvContent } = req.body;
 
   console.log("jobDescription: ");
   console.log(jobDescription);
@@ -42,8 +43,8 @@ app.post("/openai", async (req: Request, res: Response) => {
         { role: "system", content: "You are a helpful HR assistant." },
         {
           role: "user",
-          content: `Use this job description: ${jobDescription},  answer the questions follow the format: Company’s name:
-, Position:`,
+          content: `Use this job description: ${jobDescription}, and this cv content: ${cvContent}  answer the questions follow the format: Company’s name:
+, Position: , applicant name: `,
         },
       ],
     });
