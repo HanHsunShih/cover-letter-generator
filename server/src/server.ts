@@ -43,8 +43,14 @@ app.post("/openai", async (req: Request, res: Response) => {
         { role: "system", content: "You are a helpful HR assistant." },
         {
           role: "user",
-          content: `Use this job description: ${jobDescription}, and this cv content: ${cvContent}  answer the questions follow the format: Company’s name:
-, Position: , applicant name: `,
+          content: `Use this job description: ${jobDescription}, and this CV content: ${cvContent}.
+Answer the questions following this format exactly, ensuring each piece of information is on a new line:
+
+Company’s name: [Company Name]
+Position: [Position Name]
+Applicant name: [Applicant Name]
+and add the heart emoji in the end
+`,
         },
       ],
     });

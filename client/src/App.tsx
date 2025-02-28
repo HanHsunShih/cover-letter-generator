@@ -8,7 +8,6 @@ import { useEffect, useRef, useState } from "react";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
 // @ts-ignore
 import "pdfjs-dist/legacy/build/pdf.worker";
-import pdfExample from "./assets/pdf-example.pdf";
 
 function App() {
   const [result, setResult] = useState("");
@@ -130,19 +129,29 @@ function App() {
               ref={jdInput}
               onChange={handleJdOnChange}
             />
-            {jdErrorMessage && (
+            <p className="form__error-message">{jdErrorMessage || "\u00A0"}</p>
+
+            {/* {jdErrorMessage && (
               <p className="form__error-message">{jdErrorMessage}</p>
-            )}
+            )} */}
             <label htmlFor="resumeSubmitted" className="form-group__label">
               Choose your CV from device
             </label>
             <label htmlFor="resumeSubmitted" className="form-group__file-label">
               {fileName ? `Change File` : `Choose file`}
             </label>
-            {cvErrorMessage && (
-              <p className="form__error-message">{cvErrorMessage}</p>
+            {!fileName ? (
+              <p className="form__error-message">
+                {cvErrorMessage || "\u00A0"}
+              </p>
+            ) : (
+              <p className="form__file-name">{fileName}</p>
             )}
-            {fileName && <p className="form__file-name">{fileName}</p>}
+            {/* {cvErrorMessage && (
+              <p className="form__error-message">{cvErrorMessage}</p>
+            )} */}
+            {/* <p>{fileName ? `` : `${fileName}`}</p> */}
+            {/* {fileName && <p className="form__file-name">{fileName}</p>} */}
             <input
               type="file"
               name="resumeSubmitted"
