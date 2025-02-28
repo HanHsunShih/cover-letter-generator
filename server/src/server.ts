@@ -3,6 +3,37 @@ import type { Request, Response } from "express";
 import OpenAI from "openai";
 import cors from "cors";
 import dotenv from "dotenv";
+import * as docx from "docx";
+import * as fs from "fs";
+import { Document, Packer, Paragraph, TextRun } from "docx";
+
+const doc = new Document({
+  sections: [
+    {
+      properties: {},
+      children: [
+        new Paragraph({
+          children: [
+            new TextRun("Hello World"),
+            new TextRun({
+              text: "Foo Bar",
+              bold: true,
+            }),
+            new TextRun({
+              text: "\tGithub is the best",
+              bold: true,
+            }),
+          ],
+        }),
+      ],
+    },
+  ],
+});
+
+// Used to export the file into a .docx file
+Packer.toBuffer(doc).then((buffer) => {
+  fs.writeFileSync("My Document.docx", buffer);
+});
 
 dotenv.config();
 
@@ -28,9 +59,6 @@ app.post("/openai", async (req: Request, res: Response) => {
   const { jobDescription } = req.body;
   const { cvContent } = req.body;
 
-  console.log("jobDescription: ");
-  console.log(jobDescription);
-
   if (!jobDescription) {
     res.status(400).json({ error: "Job description is required" });
     return;
@@ -44,12 +72,10 @@ app.post("/openai", async (req: Request, res: Response) => {
         {
           role: "user",
           content: `Use this job description: ${jobDescription}, and this CV content: ${cvContent}.
-Answer the questions following this format exactly, ensuring each piece of information is on a new line:
+to fill in the field of the following paragraph:
 
-Company’s name: [Company Name]
-Position: [Position Name]
-Applicant name: [Applicant Name]
-and add the heart emoji in the end
+"Hi, my name is [Applicant name:], I'm intersted in [Position] in [Company’s name]"
+
 `,
         },
       ],
