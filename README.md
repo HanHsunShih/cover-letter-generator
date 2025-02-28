@@ -10,9 +10,10 @@ Recently I'm actively searching for a job and noticed many companies require a c
 So, I decided to solve this problem using my technical skills 🤓. In this project, users can paste a job description and upload their CV. Using the OpenAI API, the app generates a bespoke cover letter tailored to the job.
 
 ## Features
-- Analyzes user's resume and job description using OpenAI API
+- Convert the user-uploaded resume from PDF to an ArrayBuffer using the npm package [pdfjs-dist](https://www.npmjs.com/package/pdfjs-dist)
+- Analyzes user's resume and job description using [OpenAI API](https://platform.openai.com/docs/overview)
 - Generates a bespoke cover letter tailored to the specific job
-- Allows users to download the cover letter as a Word document
+- Uses the npm package [docx](https://docx.js.org/#/?id=welcome) to allow users to download the cover letter as a Word document.
 
 ## Build with
 <p align="left">
