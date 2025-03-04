@@ -101,13 +101,7 @@ espacially in [ company mission ], an area where I have significant passion.
 
 app.get("/download", (req, res) => {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
   const filePath = path.join(__dirname, "../My-Cover-Letter.docx");
-
-  // if (!fs.existsSync(filePath)) {
-  //   console.error("File is not found:", filePath);
-  //   return res.status(404).json({ error: "File not found" });
-  // }
 
   res.download(filePath, "cover-letter.docx", (err) => {
     if (err) {

@@ -11,6 +11,7 @@ import "pdfjs-dist/legacy/build/pdf.worker";
 
 function App() {
   const [result, setResult] = useState("");
+  const [showIcon, setShowIcon] = useState(false);
   const jdInput = useRef<HTMLTextAreaElement>(null);
   const cvInput = useRef<HTMLInputElement>(null);
   const [jdErrorMessage, setJdErrorMessage] = useState("");
@@ -20,6 +21,15 @@ function App() {
 
   const handleJdOnChange = () => {
     setJdErrorMessage("");
+  };
+
+  const handleSelectedFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      setFileName(file.name);
+      setCvErrorMessage("");
+    }
   };
 
   const GetPdfContent = async (
@@ -46,7 +56,7 @@ function App() {
     const content = await GetPdfContent(src);
     const items = content.items.map((item: pdfjsLib.TextItem) => {
       // console.log("item.str: ");
-      console.log(item.str);
+      // console.log(item.str);
       return item.str;
     });
 
@@ -93,22 +103,19 @@ function App() {
       });
 
       setResult(response.data.content);
+
+      setShowIcon(true);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleSelectedFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (file) {
-      setFileName(file.name);
-      setCvErrorMessage("");
-    }
-  };
-
-  const handleDownloadFile = async () => {
+  const handleDownloadFile = async (
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
     try {
+      event.preventDefault();
+
       const response = await axios.get(`${apiUrl}/download`, {
         responseType: "blob",
       });
@@ -165,11 +172,6 @@ function App() {
             ) : (
               <p className="form__file-name">{fileName}</p>
             )}
-            {/* {cvErrorMessage && (
-              <p className="form__error-message">{cvErrorMessage}</p>
-            )} */}
-            {/* <p>{fileName ? `` : `${fileName}`}</p> */}
-            {/* {fileName && <p className="form__file-name">{fileName}</p>} */}
             <input
               type="file"
               name="resumeSubmitted"
@@ -180,23 +182,24 @@ function App() {
               ref={cvInput}
             />
             <button type="submit" className="form-group__button">
-              Generate
+              {showIcon ? `Generate Another One` : `Generate`}
             </button>
           </div>
         </form>
 
-        <div className="download-section">
-          {result && <p>{result}</p>}
-          <h3>Download Word File</h3>
-          <a href="" onClick={handleDownloadFile}>
-            <img
-              src={docImg}
-              alt="word file image"
-              className="download-section__img"
-            />
-          </a>
-          {/* <div className="download-icon"></div> */}
-        </div>
+        {showIcon && (
+          <div className="download-section">
+            {/* {result && <p>{result}</p>} */}
+            <h3>Download Word File</h3>
+            <a href="" onClick={handleDownloadFile}>
+              <img
+                src={docImg}
+                alt="word file image"
+                className="download-section__img"
+              />
+            </a>
+          </div>
+        )}
       </div>
     </>
   );
