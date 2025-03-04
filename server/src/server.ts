@@ -4,36 +4,10 @@ import OpenAI from "openai";
 import cors from "cors";
 import dotenv from "dotenv";
 import * as docx from "docx";
-import * as fs from "fs";
+import fs from "fs";
 import { Document, Packer, Paragraph, TextRun } from "docx";
-
-const doc = new Document({
-  sections: [
-    {
-      properties: {},
-      children: [
-        new Paragraph({
-          children: [
-            new TextRun("Hello World"),
-            new TextRun({
-              text: "Foo Bar",
-              bold: true,
-            }),
-            new TextRun({
-              text: "\tGithub is the best",
-              bold: true,
-            }),
-          ],
-        }),
-      ],
-    },
-  ],
-});
-
-// Used to export the file into a .docx file
-Packer.toBuffer(doc).then((buffer) => {
-  fs.writeFileSync("My Document.docx", buffer);
-});
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
@@ -68,13 +42,16 @@ app.post("/openai", async (req: Request, res: Response) => {
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: "You are a helpful HR assistant." },
+        { role: "system", content: "You are a cover letter generator." },
         {
           role: "user",
           content: `Use this job description: ${jobDescription}, and this CV content: ${cvContent}.
-to fill in the field of the following paragraph:
+find out Applicant name, Position, Company’s name, company mission to fill in the field of the following paragraph:
 
-"Hi, my name is [Applicant name:], I'm intersted in [Position] in [Company’s name]"
+"My name is [applicant name], I am excited to apply for [ position ] for the [ Company Name]. 
+The role aligns perfectly with my skills and aspirations, 
+espacially in [ company mission ], an area where I have significant passion.
+"
 
 `,
         },
@@ -82,7 +59,55 @@ to fill in the field of the following paragraph:
     });
 
     res.json(completion.choices[0].message);
+    const coverLetterContent = completion.choices[0].message.content || "";
+
+    const applicantNameMatch = coverLetterContent.match(/My name is ([^,]+)/);
+    const applicantName = applicantNameMatch
+      ? applicantNameMatch[1]
+      : "Applicant Name";
+
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            new Paragraph({
+              children: [
+                new TextRun({ text: applicantName, bold: true }),
+                new TextRun({
+                  text: "Foo Bar",
+                  bold: true,
+                }),
+                new TextRun({
+                  text: "\tGithub is the best",
+                  bold: true,
+                }),
+                new TextRun(coverLetterContent || "No content generated"),
+              ],
+            }),
+          ],
+        },
+      ],
+    });
+
+    // Used to export the file into a .docx file
+    Packer.toBuffer(doc).then((buffer) => {
+      fs.writeFileSync("My-Cover-Letter.docx", buffer);
+    });
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
+});
+
+app.get("/download", (req, res) => {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const filePath = path.join(__dirname, "../My-Cover-Letter.docx");
+
+  res.download(filePath, "cover-letter.docx", (err) => {
+    if (err) {
+      console.error("File download failed:", err);
+    } else {
+      console.log("File downloaded successfully.");
+    }
+  });
 });
