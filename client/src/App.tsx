@@ -107,6 +107,26 @@ function App() {
     }
   };
 
+  const handleDownloadFile = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/download`, {
+        responseType: "blob",
+      });
+
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "cover-letter.docx"; // ✅ Set the filename
+      document.body.appendChild(link);
+      link.click(); // ✅ Trigger the download
+      document.body.removeChild(link); // Cleanup
+    } catch (error) {
+      console.error("File download failed:", error);
+    }
+  };
+
   return (
     <>
       <div className="container">
@@ -168,11 +188,13 @@ function App() {
         <div className="download-section">
           {result && <p>{result}</p>}
           <h3>Download Word File</h3>
-          <img
-            src={docImg}
-            alt="word file image"
-            className="download-section__img"
-          />
+          <a href="" onClick={handleDownloadFile}>
+            <img
+              src={docImg}
+              alt="word file image"
+              className="download-section__img"
+            />
+          </a>
           {/* <div className="download-icon"></div> */}
         </div>
       </div>
