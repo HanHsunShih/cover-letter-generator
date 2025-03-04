@@ -117,12 +117,43 @@
   }
 }
 
+@keyframes bounce {
+  0% {
+    top: 0;
+  }
+  10% {
+    top: -1px;
+  }
+  45% {
+    top: -10px;
+  }
+  55% {
+    top: -10px;
+  }
+  90% {
+    top: -1px;
+  }
+  100% {
+    top: 0;
+  }
+}
+
 .download-section {
   text-align: center;
   margin-top: 2rem;
 
+  &__text {
+    margin: 0.8rem;
+  }
+
   &__img {
     width: 4rem;
+    position: relative;
+    // box-shadow: 5px 10px;
+
+    &:hover {
+      animation: bounce 1s infinite;
+    }
 
     &:active {
       width: 3.8rem;
