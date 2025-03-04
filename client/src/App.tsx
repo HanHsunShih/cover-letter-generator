@@ -78,33 +78,38 @@ function App() {
 
   const handleSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
-      event.preventDefault();
-      let hasError = false;
+      if (showIcon === false) {
+        event.preventDefault();
+        let hasError = false;
 
-      if (!jdInput.current?.value.trim()) {
-        setJdErrorMessage("Please paste job description");
-        hasError = true;
+        if (!jdInput.current?.value.trim()) {
+          setJdErrorMessage("Please paste job description");
+          hasError = true;
+        }
+
+        const file = cvInput.current?.files?.[0];
+        if (!file) {
+          setCvErrorMessage("Please upload your resume as a PDF file");
+          hasError = true;
+        }
+
+        if (hasError) return;
+
+        const cvResponse = await readFileAsText(file!);
+        const extractText = cvResponse.join("");
+
+        const response = await axios.post(`${apiUrl}/openai`, {
+          jobDescription: jdInput.current?.value,
+          cvContent: extractText,
+        });
+
+        setResult(response.data.content);
+
+        setShowIcon((prev) => !prev);
+      } else {
+        event.preventDefault();
+        setShowIcon((prev) => !prev);
       }
-
-      const file = cvInput.current?.files?.[0];
-      if (!file) {
-        setCvErrorMessage("Please upload your resume as a PDF file");
-        hasError = true;
-      }
-
-      if (hasError) return;
-
-      const cvResponse = await readFileAsText(file!);
-      const extractText = cvResponse.join("");
-
-      const response = await axios.post(`${apiUrl}/openai`, {
-        jobDescription: jdInput.current?.value,
-        cvContent: extractText,
-      });
-
-      setResult(response.data.content);
-
-      setShowIcon(true);
     } catch (error) {
       console.log(error);
     }
@@ -125,10 +130,10 @@ function App() {
       });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "cover-letter.docx"; // ✅ Set the filename
+      link.download = "cover-letter.docx";
       document.body.appendChild(link);
-      link.click(); // ✅ Trigger the download
-      document.body.removeChild(link); // Cleanup
+      link.click();
+      document.body.removeChild(link);
     } catch (error) {
       console.error("File download failed:", error);
     }
