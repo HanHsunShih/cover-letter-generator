@@ -4,8 +4,10 @@ import OpenAI from "openai";
 import cors from "cors";
 import dotenv from "dotenv";
 import * as docx from "docx";
-import * as fs from "fs";
+import fs from "fs";
 import { Document, Packer, Paragraph, TextRun } from "docx";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
@@ -57,7 +59,7 @@ espacially in [ company mission ], an area where I have significant passion.
       ],
     });
 
-    const renderCoverLetterContent = res.json(completion.choices[0].message);
+    res.json(completion.choices[0].message);
     const coverLetterContent = completion.choices[0].message.content;
 
     const doc = new Document({
@@ -86,9 +88,28 @@ espacially in [ company mission ], an area where I have significant passion.
 
     // Used to export the file into a .docx file
     Packer.toBuffer(doc).then((buffer) => {
-      fs.writeFileSync("My Document.docx", buffer);
+      fs.writeFileSync("My-Cover-Letter.docx", buffer);
     });
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
+});
+
+app.get("/download", (req, res) => {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+  const filePath = path.join(__dirname, "../My-Cover-Letter.docx");
+
+  // if (!fs.existsSync(filePath)) {
+  //   console.error("File is not found:", filePath);
+  //   return res.status(404).json({ error: "File not found" });
+  // }
+
+  res.download(filePath, "cover-letter.docx", (err) => {
+    if (err) {
+      console.error("File download failed:", err);
+    } else {
+      console.log("File downloaded successfully.");
+    }
+  });
 });
