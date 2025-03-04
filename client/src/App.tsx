@@ -194,7 +194,7 @@ function App() {
 
         {showIcon && (
           <div className="download-section">
-            {/* {result && <p>{result}</p>} */}
+            {result && <p>{result}</p>}
             <h3 className="download-section__text">Download Word File</h3>
             <a href="" onClick={handleDownloadFile}>
               <img

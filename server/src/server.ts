@@ -8,6 +8,7 @@ import fs from "fs";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import path from "path";
 import { fileURLToPath } from "url";
+import { HeadingLevel } from "docx";
 
 dotenv.config();
 
@@ -48,11 +49,11 @@ app.post("/openai", async (req: Request, res: Response) => {
           content: `Use this job description: ${jobDescription}, and this CV content: ${cvContent}.
 find out Applicant name, Position, Company’s name, company mission to fill in the field of the following paragraph:
 
-"My name is [applicant name], I am excited to apply for [ position ] for the [ Company Name]. 
+"My name is [applicant name], I am excited to apply for the [ position ] position for [ Company Name]. 
 The role aligns perfectly with my skills and aspirations, 
 espacially in [ company mission ], an area where I have significant passion.
 "
-
+make sure you remove quotation marks at the begining and the end.
 `,
         },
       ],
@@ -66,13 +67,65 @@ espacially in [ company mission ], an area where I have significant passion.
       ? applicantNameMatch[1]
       : "Applicant Name";
 
+    const positionMatch = coverLetterContent.match(
+      /excited to apply for the ([^,]+) position/
+    );
+    const position = positionMatch ? positionMatch[1] : "position";
+
+    const date = new Date().toLocaleDateString("en-us", {
+      month: "short",
+      day: "numeric",
+    });
+
+    const companyNameMatch = coverLetterContent.match(
+      /position for ([^,]+). The/
+    );
+    const companyName = companyNameMatch ? companyNameMatch[1] : "Company Name";
+
     const doc = new Document({
       sections: [
         {
           properties: {},
           children: [
             new Paragraph({
+              heading: HeadingLevel.HEADING_1, // 設定標題等級
               children: [
+                new TextRun({
+                  text: applicantName, // 文字內容
+                  bold: true, // 設定加粗
+                  font: "Calibri", // 設定字體
+                  color: "000000",
+                }),
+              ],
+            }),
+            new Paragraph({
+              heading: HeadingLevel.HEADING_3, // 設定標題等級
+              children: [
+                new TextRun({
+                  text: position, // 文字內容
+                  bold: true, // 設定加粗
+                  font: "Calibri", // 設定字體
+                  allCaps: true,
+                  color: "787D7B", // 設定全大寫
+                }),
+              ],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [new TextRun({ text: date })],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `To the hiring team at ${companyName}`,
+                }),
+              ],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [
+                new TextRun(coverLetterContent || "No content generated"),
                 new TextRun({ text: applicantName, bold: true }),
                 new TextRun({
                   text: "Foo Bar",
@@ -82,7 +135,6 @@ espacially in [ company mission ], an area where I have significant passion.
                   text: "\tGithub is the best",
                   bold: true,
                 }),
-                new TextRun(coverLetterContent || "No content generated"),
               ],
             }),
           ],
