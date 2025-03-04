@@ -48,8 +48,7 @@ app.post("/openai", async (req: Request, res: Response) => {
           content: `Use this job description: ${jobDescription}, and this CV content: ${cvContent}.
 find out Applicant name, Position, Company’s name, company mission to fill in the field of the following paragraph:
 
-"Hi, my name is [Applicant name:], I'm intersted in [Position] in [Company’s name], 
-I am excited to apply for [ position ] for the [ Company Name]. 
+"My name is [applicant name], I am excited to apply for [ position ] for the [ Company Name]. 
 The role aligns perfectly with my skills and aspirations, 
 espacially in [ company mission ], an area where I have significant passion.
 "
@@ -60,7 +59,12 @@ espacially in [ company mission ], an area where I have significant passion.
     });
 
     res.json(completion.choices[0].message);
-    const coverLetterContent = completion.choices[0].message.content;
+    const coverLetterContent = completion.choices[0].message.content || "";
+
+    const applicantNameMatch = coverLetterContent.match(/My name is ([^,]+)/);
+    const applicantName = applicantNameMatch
+      ? applicantNameMatch[1]
+      : "Applicant Name";
 
     const doc = new Document({
       sections: [
@@ -69,7 +73,7 @@ espacially in [ company mission ], an area where I have significant passion.
           children: [
             new Paragraph({
               children: [
-                new TextRun("Hello World"),
+                new TextRun({ text: applicantName, bold: true }),
                 new TextRun({
                   text: "Foo Bar",
                   bold: true,
