@@ -76,10 +76,12 @@ app.post("/openai", async (req: Request, res: Response) => {
 
     // 解析 JSON 內容
     const content1 = completion1.choices?.[0]?.message?.content ?? "";
-    console.log("content1: ");
-    console.log(content1);
+    // console.log("content1: ");
+    // console.log(content1);
 
     const extractedInfo = JSON.parse(content1);
+    console.log("extractedInfo: ");
+    console.log(extractedInfo);
 
     // 讓 extractedInfo 確保有值（如果 API 沒返回值則給預設值）
     const applicantName = extractedInfo.applicant_name || "Unknown Name";
@@ -87,21 +89,31 @@ app.post("/openai", async (req: Request, res: Response) => {
     const company = extractedInfo.company || "Unknown Company";
     const companyMission = extractedInfo.company_mission || "Unknown Mission";
 
-    const completion2 = await openai.chat.completions.create({
+    const firstParagraph = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: "You are a cover letter generator." },
+        {
+          role: "system",
+          content:
+            "You are going to help me generate the first paragraph of my cover letter.",
+        },
         {
           role: "user",
-          content: `Use the information you extracted above, fill in the field of this paragraph, refine for better flow if neccessary:
+          content: `Here's the extracted information: ${content1}, 
+          fill in the field of the paragraph of my cover letter, strictly follow the structure:
+
           I am excited to apply for [ position ] for the [Company Name]. 
           The role aligns perfectly with my skills and aspirations, 
-          espacially in [ company  mission ], a field that strongly interests me.`,
+          espacially in [ company  mission ], a field that strongly interests me. 
+          [Company Name]'s focus on [ position task ] resonates with my passion - 
+          [ related experience and enthusiasm ], 
+          and I am eager to contribute while growing with your team.
+           `,
         },
       ],
     });
 
-    const content2 = completion2.choices?.[0].message?.content ?? "";
+    const content2 = firstParagraph.choices?.[0].message?.content ?? "";
     console.log("content2: ");
     console.log(content2);
 
