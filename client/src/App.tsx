@@ -103,7 +103,14 @@ function App() {
           cvContent: extractText,
         });
 
-        setResult(response.data.content);
+        console.log(
+          "response.data.extractedInfo:" + response.data.extractedInfo
+        );
+
+        // setResult(response.data);
+
+        // console.log("result");
+        // console.log(result);
 
         setShowIcon((prev) => !prev);
       } else {

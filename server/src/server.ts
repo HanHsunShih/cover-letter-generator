@@ -40,47 +40,67 @@ app.post("/openai", async (req: Request, res: Response) => {
   }
 
   try {
-    const completion = await openai.chat.completions.create({
+    const completion1 = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "You are a information extractor." },
+        {
+          role: "user",
+          content: `Use this job description: ${jobDescription}, and this CV content: ${cvContent}.
+      Find and return the following details in JSON format, 
+      
+      your response should start with curly braces:
+      {
+        "applicant_name": "Your Name",
+        "position": "Job Title",
+        "company": "Company Name",
+        "company_mission": "Company's mission",
+        "position_task": "Position's task",
+        "related_experience_1": {
+        "title": "title",
+        "skill": "skills, experiences align with company’s needs",
+        "key-achievement": "Key achievement in this experience",
+        "relevant-skill-or-experience": "Relevant skill or experience",
+        "key-lesson-learned": "Key lessons learned"
+        }
+
+      }`,
+        },
+      ],
+    });
+
+    // 解析 JSON 內容
+    const content1 = completion1.choices?.[0]?.message?.content ?? "";
+    console.log("content1: ");
+    console.log(content1);
+
+    const extractedInfo = JSON.parse(content1);
+
+    // 讓 extractedInfo 確保有值（如果 API 沒返回值則給預設值）
+    const applicantName = extractedInfo.applicant_name || "Unknown Name";
+    const position = extractedInfo.position || "Unknown Position";
+    const company = extractedInfo.company || "Unknown Company";
+    const companyMission = extractedInfo.company_mission || "Unknown Mission";
+
+    const completion2 = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         { role: "system", content: "You are a cover letter generator." },
         {
           role: "user",
-          content: `Use this job description: ${jobDescription}, and this CV content: ${cvContent}.
-find out Applicant name, Position, Company’s name, company mission to fill in the field of the following paragraph:
-
-"My name is [applicant name], I am excited to apply for the [ position ] position for [ Company Name]. 
-The role aligns perfectly with my skills and aspirations, 
-espacially in [ company mission ], an area where I have significant passion.
-"
-make sure you remove quotation marks at the begining and the end.
-`,
+          content: `Use the information you extracted above, fill in the field of this paragraph:
+          I am excited to apply for [ position ] for the [Company Name]. 
+          The role aligns perfectly with my skills and aspirations, 
+          espacially in [ company  mission ], a field that strongly interests me.`,
         },
       ],
     });
 
-    res.json(completion.choices[0].message);
-    const coverLetterContent = completion.choices[0].message.content || "";
+    const content2 = completion2.choices?.[0].message?.content ?? "";
+    console.log("content2: ");
+    console.log(content2);
 
-    const applicantNameMatch = coverLetterContent.match(/My name is ([^,]+)/);
-    const applicantName = applicantNameMatch
-      ? applicantNameMatch[1]
-      : "Applicant Name";
-
-    const positionMatch = coverLetterContent.match(
-      /excited to apply for the ([^,]+) position/
-    );
-    const position = positionMatch ? positionMatch[1] : "position";
-
-    const date = new Date().toLocaleDateString("en-us", {
-      month: "short",
-      day: "numeric",
-    });
-
-    const companyNameMatch = coverLetterContent.match(
-      /position for ([^,]+). The/
-    );
-    const companyName = companyNameMatch ? companyNameMatch[1] : "Company Name";
+    res.json({ extractedInfo: content1, coverLetter: content2 });
 
     const doc = new Document({
       sections: [
@@ -98,45 +118,45 @@ make sure you remove quotation marks at the begining and the end.
                 }),
               ],
             }),
-            new Paragraph({
-              heading: HeadingLevel.HEADING_3, // 設定標題等級
-              children: [
-                new TextRun({
-                  text: position, // 文字內容
-                  bold: true, // 設定加粗
-                  font: "Calibri", // 設定字體
-                  allCaps: true,
-                  color: "787D7B", // 設定全大寫
-                }),
-              ],
-            }),
-            new Paragraph({}),
-            new Paragraph({
-              children: [new TextRun({ text: date })],
-            }),
-            new Paragraph({}),
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `To the hiring team at ${companyName}`,
-                }),
-              ],
-            }),
-            new Paragraph({}),
-            new Paragraph({
-              children: [
-                new TextRun(coverLetterContent || "No content generated"),
-                new TextRun({ text: applicantName, bold: true }),
-                new TextRun({
-                  text: "Foo Bar",
-                  bold: true,
-                }),
-                new TextRun({
-                  text: "\tGithub is the best",
-                  bold: true,
-                }),
-              ],
-            }),
+            // new Paragraph({
+            //   heading: HeadingLevel.HEADING_3, // 設定標題等級
+            //   children: [
+            //     new TextRun({
+            //       text: position, // 文字內容
+            //       bold: true, // 設定加粗
+            //       font: "Calibri", // 設定字體
+            //       allCaps: true,
+            //       color: "787D7B", // 設定全大寫
+            //     }),
+            //   ],
+            // }),
+            // new Paragraph({}),
+            // new Paragraph({
+            //   children: [new TextRun({ text: date })],
+            // }),
+            // new Paragraph({}),
+            // new Paragraph({
+            //   children: [
+            //     new TextRun({
+            //       text: `To the hiring team at ${companyName}`,
+            //     }),
+            //   ],
+            // }),
+            // new Paragraph({}),
+            // new Paragraph({
+            //   children: [
+            //     new TextRun(coverLetterContent || "No content generated"),
+            //     new TextRun({ text: applicantName, bold: true }),
+            //     new TextRun({
+            //       text: "Foo Bar",
+            //       bold: true,
+            //     }),
+            //     new TextRun({
+            //       text: "\tGithub is the best",
+            //       bold: true,
+            //     }),
+            //   ],
+            // }),
           ],
         },
       ],
