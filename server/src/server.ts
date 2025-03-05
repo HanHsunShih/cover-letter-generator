@@ -60,11 +60,11 @@ app.post("/openai", async (req: Request, res: Response) => {
         "position_task": "Position's task",
         "related_experience_1": {
         "title": "title",
-        "brief-introduction": "brief introduction of the experience, only in one sentence",
+        "brief_introduction": "brief introduction of the experience, only in one sentence",
         "skill": "skills, experiences align with company’s needs",
-        "key-achievement": "Key achievement in this experience",
-        "relevant-skill-or-experience": "Relevant skill or experience",
-        "key-lesson-learned": "Key lessons learned"
+        "key_achievement": "Key achievement in this experience, keep it concise and only in one sentence",
+        "relevant_skill": "Relevant skill or experience, keep it concise and only in one sentence",
+        "key_lesson_learned": "Key lessons learned, keep it concise and only in one sentence"
         }
         "related_experience_2": {
         "title": "title",
@@ -87,6 +87,14 @@ app.post("/openai", async (req: Request, res: Response) => {
     // 讓 extractedInfo 確保有值（如果 API 沒返回值則給預設值）
     const applicantName = extractedInfo.applicant_name || "Unknown Name";
     const position = extractedInfo.position || "Unknown Position";
+    const keyAchievement =
+      extractedInfo.related_experience_1.key_achievement ||
+      "Unknown Achievement";
+    const RelevantSkills =
+      extractedInfo.related_experience_1.relevant_skill || "Unknown Skills";
+    const LessonsLearned =
+      extractedInfo.related_experience_1.key_lesson_learned ||
+      "Unknown Learned Lesson";
     const company = extractedInfo.company || "Unknown Company";
     const email = extractedInfo.applicant_email || "Unknown Email";
     const phoneNumber =
@@ -120,8 +128,8 @@ app.post("/openai", async (req: Request, res: Response) => {
     });
 
     const firstParagraoh = completion2.choices?.[0].message?.content ?? "";
-    console.log("firstParagraoh: ");
-    console.log(firstParagraoh);
+    // console.log("firstParagraoh: ");
+    // console.log(firstParagraoh);
 
     const completion3 = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -209,6 +217,25 @@ app.post("/openai", async (req: Request, res: Response) => {
                   text: secondParagraph || "No content generated",
                 }),
               ],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              text: keyAchievement,
+              bullet: {
+                level: 0,
+              },
+            }),
+            new Paragraph({
+              text: RelevantSkills,
+              bullet: {
+                level: 0,
+              },
+            }),
+            new Paragraph({
+              text: LessonsLearned,
+              bullet: {
+                level: 0,
+              },
             }),
             new Paragraph({}),
             new Paragraph({
