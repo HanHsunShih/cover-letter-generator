@@ -51,10 +51,12 @@ app.post("/openai", async (req: Request, res: Response) => {
       
       your response should start with curly braces:
       {
-        "applicant_name": "Your Name",
+        "applicant_name": "Name",
+        "applicant_email": "Email",
+        "applicant_phone-number": "Phone number",
         "position": "Job Title",
         "company": "Company Name",
-        "company_mission": "Company's mission",
+        "company_mission": "Only in one sentence, keep it concise and related to the position user apply, less then 10 words",
         "position_task": "Position's task",
         "related_experience_1": {
         "title": "title",
@@ -63,7 +65,10 @@ app.post("/openai", async (req: Request, res: Response) => {
         "relevant-skill-or-experience": "Relevant skill or experience",
         "key-lesson-learned": "Key lessons learned"
         }
-
+        "related_experience_2": {
+        "title": "title",
+        "background-ability": "skills, experiences from related_experience_2",
+        } 
       }`,
         },
       ],
@@ -88,7 +93,7 @@ app.post("/openai", async (req: Request, res: Response) => {
         { role: "system", content: "You are a cover letter generator." },
         {
           role: "user",
-          content: `Use the information you extracted above, fill in the field of this paragraph:
+          content: `Use the information you extracted above, fill in the field of this paragraph, refine for better flow if neccessary:
           I am excited to apply for [ position ] for the [Company Name]. 
           The role aligns perfectly with my skills and aspirations, 
           espacially in [ company  mission ], a field that strongly interests me.`,
