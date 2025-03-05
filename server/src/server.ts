@@ -100,10 +100,11 @@ app.post("/openai", async (req: Request, res: Response) => {
     const phoneNumber =
       extractedInfo.applicant_phone_number || "Unknown Phone Number";
 
-    const date = new Date().toLocaleDateString("en-us", {
-      month: "short",
-      day: "numeric",
-    });
+    const dateObj = new Date();
+    const formattedDate = `${dateObj.getDate()}, ${dateObj.toLocaleDateString(
+      "en-us",
+      { month: "short" }
+    )}`;
 
     const completion2 = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -187,18 +188,32 @@ app.post("/openai", async (req: Request, res: Response) => {
     });
 
     const doc = new Document({
+      styles: {
+        default: {
+          document: {
+            run: {
+              font: "Lato",
+              size: 24,
+            },
+            paragraph: {
+              spacing: { after: 200 },
+            },
+          },
+        },
+      },
       sections: [
         {
           properties: {},
           children: [
             new Paragraph({
               heading: HeadingLevel.HEADING_1,
+              spacing: { after: 100 },
               children: [
                 new TextRun({
                   text: applicantName,
                   bold: true,
-                  font: "Calibri",
                   color: "000000",
+                  size: 44,
                 }),
               ],
             }),
@@ -208,25 +223,23 @@ app.post("/openai", async (req: Request, res: Response) => {
                 new TextRun({
                   text: position,
                   bold: true,
-                  font: "Calibri",
                   allCaps: true,
                   color: "787D7B",
+                  size: 30,
                 }),
               ],
             }),
-            new Paragraph({}),
             new Paragraph({
-              children: [new TextRun({ text: date })],
+              children: [new TextRun({ text: formattedDate, font: "Arial" })],
             }),
-            new Paragraph({}),
             new Paragraph({
               children: [
+                new TextRun({ break: 1 }),
                 new TextRun({
                   text: `To the hiring team at ${company}`,
                 }),
               ],
             }),
-            new Paragraph({}),
             new Paragraph({
               children: [
                 new TextRun({
@@ -234,7 +247,6 @@ app.post("/openai", async (req: Request, res: Response) => {
                 }),
               ],
             }),
-            new Paragraph({}),
             new Paragraph({
               children: [
                 new TextRun({
@@ -242,7 +254,6 @@ app.post("/openai", async (req: Request, res: Response) => {
                 }),
               ],
             }),
-            new Paragraph({}),
             new Paragraph({
               text: keyAchievement,
               bullet: {
@@ -261,7 +272,6 @@ app.post("/openai", async (req: Request, res: Response) => {
                 level: 0,
               },
             }),
-            new Paragraph({}),
             new Paragraph({
               children: [
                 new TextRun({
@@ -269,7 +279,6 @@ app.post("/openai", async (req: Request, res: Response) => {
                 }),
               ],
             }),
-            new Paragraph({}),
             new Paragraph({
               children: [
                 new TextRun({
@@ -277,7 +286,6 @@ app.post("/openai", async (req: Request, res: Response) => {
                 }),
               ],
             }),
-            new Paragraph({}),
             new Paragraph({
               children: [
                 new TextRun({
@@ -285,7 +293,6 @@ app.post("/openai", async (req: Request, res: Response) => {
                 }),
               ],
             }),
-            new Paragraph({}),
             new Paragraph({
               children: [
                 new TextRun({
