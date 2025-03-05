@@ -153,8 +153,32 @@ app.post("/openai", async (req: Request, res: Response) => {
 
     const secondParagraph = completion3.choices?.[0].message?.content ?? "";
 
-    console.log("secondParagraph: ");
-    console.log(secondParagraph);
+    // console.log("secondParagraph: ");
+    // console.log(secondParagraph);
+
+    const completion4 = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: "You are a cover letter generator.",
+        },
+        {
+          role: "user",
+          content: `Here's the extracted information: ${extractedInfoJSON},
+          fill in the field of the paragraph of my cover letter, strictly follow the structure, end with "the company's goal", I will manually add final paragraph:
+
+          My unique background as [related_experience_2.title] has provided me with [related_experience_2.background-ability], 
+          which I believe can also contribute to driving the company’s success in achieving the company's goal.
+          `,
+        },
+      ],
+    });
+
+    const thirdParagraph = completion4.choices?.[0].message?.content ?? "";
+
+    console.log("thirdParagraph: ");
+    console.log(thirdParagraph);
 
     res.json({
       extractedInfo: extractedInfoJSON,
@@ -236,6 +260,14 @@ app.post("/openai", async (req: Request, res: Response) => {
               bullet: {
                 level: 0,
               },
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: thirdParagraph,
+                }),
+              ],
             }),
             new Paragraph({}),
             new Paragraph({
