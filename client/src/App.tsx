@@ -1,9 +1,8 @@
-// import { useState } from "react";
 import "./App.scss";
 import axios from "axios";
 import docImg from "./assets/images/doc.png";
-// import { getOpenAIResponse } from "../utils/apiUtils";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 // @ts-ignore
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
 // @ts-ignore
@@ -17,6 +16,7 @@ function App() {
   const [jdErrorMessage, setJdErrorMessage] = useState("");
   const [cvErrorMessage, setCvErrorMessage] = useState("");
   const [fileName, setFileName] = useState("");
+  const [loadingIcon, setLoadingIcon] = useState(false);
   const apiUrl = import.meta.env.VITE_SERVER_URL;
 
   const handleJdOnChange = () => {
@@ -93,6 +93,7 @@ function App() {
       }
 
       if (hasError) return;
+      setLoadingIcon(true);
 
       const cvResponse = await readFileAsText(file!);
       const extractText = cvResponse.join("");
@@ -103,7 +104,7 @@ function App() {
       });
 
       setResult(response.data.content);
-
+      setLoadingIcon(false);
       setShowIcon(true);
     } catch (error) {
       console.log(error);
@@ -191,6 +192,13 @@ function App() {
           <div className="download-section">
             {/* {result && <p>{result}</p>} */}
             <h3 className="download-section__text">Download Word File</h3>
+            {loadingIcon && (
+              <DotLottieReact
+                src="https://lottie.host/632e723c-779b-4d68-9f03-f561424e0652/TYs70iacrm.lottie"
+                loop
+                autoplay
+              />
+            )}
             <a href="" onClick={handleDownloadFile}>
               <img
                 src={docImg}
