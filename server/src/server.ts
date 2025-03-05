@@ -8,6 +8,7 @@ import fs from "fs";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import path from "path";
 import { fileURLToPath } from "url";
+import { HeadingLevel } from "docx";
 
 dotenv.config();
 
@@ -39,32 +40,93 @@ app.post("/openai", async (req: Request, res: Response) => {
   }
 
   try {
-    const completion = await openai.chat.completions.create({
+    const completion1 = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: "You are a cover letter generator." },
+        { role: "system", content: "You are a information extractor." },
         {
           role: "user",
           content: `Use this job description: ${jobDescription}, and this CV content: ${cvContent}.
-find out Applicant name, Position, Company’s name, company mission to fill in the field of the following paragraph:
-
-"My name is [applicant name], I am excited to apply for [ position ] for the [ Company Name]. 
-The role aligns perfectly with my skills and aspirations, 
-espacially in [ company mission ], an area where I have significant passion.
-"
-
-`,
+      Find and return the following details in JSON format, 
+      
+      your response should start with curly braces:
+      {
+        "applicant_name": "Name",
+        "applicant_email": "Email",
+        "applicant_phone_number": "Phone number",
+        "position": "Job Title",
+        "company": "Company Name",
+        "company_mission": "Only in one sentence, keep it concise and related to the position user apply, less then 10 words",
+        "position_task": "Position's task",
+        "related_experience_1": {
+        "title": "title",
+        "skill": "skills, experiences align with company’s needs",
+        "key-achievement": "Key achievement in this experience",
+        "relevant-skill-or-experience": "Relevant skill or experience",
+        "key-lesson-learned": "Key lessons learned"
+        }
+        "related_experience_2": {
+        "title": "title",
+        "background-ability": "skills, experiences from related_experience_2",
+        } 
+      }`,
         },
       ],
     });
 
-    res.json(completion.choices[0].message);
-    const coverLetterContent = completion.choices[0].message.content || "";
+    // 解析 JSON 內容
+    const extractedInfoJSON = completion1.choices?.[0]?.message?.content ?? "";
+    // console.log("content1: ");
+    // console.log(content1);
 
-    const applicantNameMatch = coverLetterContent.match(/My name is ([^,]+)/);
-    const applicantName = applicantNameMatch
-      ? applicantNameMatch[1]
-      : "Applicant Name";
+    const extractedInfo = JSON.parse(extractedInfoJSON);
+    console.log("extractedInfo: ");
+    console.log(extractedInfo);
+
+    // 讓 extractedInfo 確保有值（如果 API 沒返回值則給預設值）
+    const applicantName = extractedInfo.applicant_name || "Unknown Name";
+    const position = extractedInfo.position || "Unknown Position";
+    const company = extractedInfo.company || "Unknown Company";
+    const email = extractedInfo.applicant_email || "Unknown Email";
+    const phoneNumber =
+      extractedInfo.applicant_phone_number || "Unknown Phone Number";
+
+    const date = new Date().toLocaleDateString("en-us", {
+      month: "short",
+      day: "numeric",
+    });
+
+    const completion2 = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are going to help me generate the first paragraph of my cover letter.",
+        },
+        {
+          role: "user",
+          content: `Here's the extracted information: ${extractedInfoJSON}, 
+          fill in the field of the paragraph of my cover letter, strictly follow the structure:
+
+          I am excited to apply for [ position ] for the [Company Name]. 
+          The role aligns perfectly with my skills and aspirations, 
+          espacially in [ company  mission ], a field that strongly interests me. 
+          [Company Name]'s focus on [ position task ] resonates with my passion - 
+          [ related experience and enthusiasm ], and I am eager to contribute while growing with your team.
+           `,
+        },
+      ],
+    });
+
+    const firstParagraoh = completion2.choices?.[0].message?.content ?? "";
+    console.log("firstParagraoh: ");
+    console.log(firstParagraoh);
+
+    res.json({
+      extractedInfo: extractedInfoJSON,
+      firstParagraoh: firstParagraoh,
+    });
 
     const doc = new Document({
       sections: [
@@ -72,17 +134,89 @@ espacially in [ company mission ], an area where I have significant passion.
           properties: {},
           children: [
             new Paragraph({
+              heading: HeadingLevel.HEADING_1,
               children: [
-                new TextRun({ text: applicantName, bold: true }),
                 new TextRun({
-                  text: "Foo Bar",
+                  text: applicantName,
                   bold: true,
+                  font: "Calibri",
+                  color: "000000",
+                }),
+              ],
+            }),
+            new Paragraph({
+              heading: HeadingLevel.HEADING_3,
+              children: [
+                new TextRun({
+                  text: position,
+                  bold: true,
+                  font: "Calibri",
+                  allCaps: true,
+                  color: "787D7B",
+                }),
+              ],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [new TextRun({ text: date })],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `To the hiring team at ${company}`,
+                }),
+              ],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: firstParagraoh || "No content generated",
+                }),
+              ],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `Please let me know a convenient time to connect—I’m excited to explore how I can contribute to your team’s success.`,
+                }),
+              ],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `Thank you,`,
+                }),
+              ],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: applicantName,
+                }),
+              ],
+            }),
+            new Paragraph({
+              children: [
+                new docx.ExternalHyperlink({
+                  children: [
+                    new TextRun({
+                      text: email,
+                      style: "Hyperlink",
+                    }),
+                  ],
+                  link: email,
                 }),
                 new TextRun({
-                  text: "\tGithub is the best",
-                  bold: true,
+                  text: " ",
                 }),
-                new TextRun(coverLetterContent || "No content generated"),
+                new TextRun({
+                  text: phoneNumber,
+                }),
               ],
             }),
           ],

@@ -1,8 +1,9 @@
+// import { useState } from "react";
 import "./App.scss";
 import axios from "axios";
 import docImg from "./assets/images/doc.png";
-import { useRef, useState } from "react";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+// import { getOpenAIResponse } from "../utils/apiUtils";
+import { useEffect, useRef, useState } from "react";
 // @ts-ignore
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
 // @ts-ignore
@@ -16,7 +17,6 @@ function App() {
   const [jdErrorMessage, setJdErrorMessage] = useState("");
   const [cvErrorMessage, setCvErrorMessage] = useState("");
   const [fileName, setFileName] = useState("");
-  const [loadingIcon, setLoadingIcon] = useState(false);
   const apiUrl = import.meta.env.VITE_SERVER_URL;
 
   const handleJdOnChange = () => {
@@ -78,34 +78,45 @@ function App() {
 
   const handleSubmitForm = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
-      event.preventDefault();
-      let hasError = false;
+      if (showIcon === false) {
+        event.preventDefault();
+        let hasError = false;
 
-      if (!jdInput.current?.value.trim()) {
-        setJdErrorMessage("Please paste job description");
-        hasError = true;
+        if (!jdInput.current?.value.trim()) {
+          setJdErrorMessage("Please paste job description");
+          hasError = true;
+        }
+
+        const file = cvInput.current?.files?.[0];
+        if (!file) {
+          setCvErrorMessage("Please upload your resume as a PDF file");
+          hasError = true;
+        }
+
+        if (hasError) return;
+
+        const cvResponse = await readFileAsText(file!);
+        const extractText = cvResponse.join("");
+
+        const response = await axios.post(`${apiUrl}/openai`, {
+          jobDescription: jdInput.current?.value,
+          cvContent: extractText,
+        });
+
+        console.log(
+          "response.data.extractedInfo:" + response.data.extractedInfo
+        );
+
+        // setResult(response.data);
+
+        // console.log("result");
+        // console.log(result);
+
+        setShowIcon((prev) => !prev);
+      } else {
+        event.preventDefault();
+        setShowIcon((prev) => !prev);
       }
-
-      const file = cvInput.current?.files?.[0];
-      if (!file) {
-        setCvErrorMessage("Please upload your resume as a PDF file");
-        hasError = true;
-      }
-
-      if (hasError) return;
-      setLoadingIcon(true);
-
-      const cvResponse = await readFileAsText(file!);
-      const extractText = cvResponse.join("");
-
-      const response = await axios.post(`${apiUrl}/openai`, {
-        jobDescription: jdInput.current?.value,
-        cvContent: extractText,
-      });
-
-      setResult(response.data.content);
-      setLoadingIcon(false);
-      setShowIcon(true);
     } catch (error) {
       console.log(error);
     }
@@ -126,10 +137,10 @@ function App() {
       });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "cover-letter.docx"; // ✅ Set the filename
+      link.download = "cover-letter.docx";
       document.body.appendChild(link);
-      link.click(); // ✅ Trigger the download
-      document.body.removeChild(link); // Cleanup
+      link.click();
+      document.body.removeChild(link);
     } catch (error) {
       console.error("File download failed:", error);
     }
@@ -190,15 +201,8 @@ function App() {
 
         {showIcon && (
           <div className="download-section">
-            {/* {result && <p>{result}</p>} */}
+            {result && <p>{result}</p>}
             <h3 className="download-section__text">Download Word File</h3>
-            {loadingIcon && (
-              <DotLottieReact
-                src="https://lottie.host/632e723c-779b-4d68-9f03-f561424e0652/TYs70iacrm.lottie"
-                loop
-                autoplay
-              />
-            )}
             <a href="" onClick={handleDownloadFile}>
               <img
                 src={docImg}
