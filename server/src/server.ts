@@ -53,7 +53,7 @@ app.post("/openai", async (req: Request, res: Response) => {
       {
         "applicant_name": "Name",
         "applicant_email": "Email",
-        "applicant_phone-number": "Phone number",
+        "applicant_phone_number": "Phone number",
         "position": "Job Title",
         "company": "Company Name",
         "company_mission": "Only in one sentence, keep it concise and related to the position user apply, less then 10 words",
@@ -75,11 +75,11 @@ app.post("/openai", async (req: Request, res: Response) => {
     });
 
     // 解析 JSON 內容
-    const content1 = completion1.choices?.[0]?.message?.content ?? "";
+    const extractedInfoJSON = completion1.choices?.[0]?.message?.content ?? "";
     // console.log("content1: ");
     // console.log(content1);
 
-    const extractedInfo = JSON.parse(content1);
+    const extractedInfo = JSON.parse(extractedInfoJSON);
     console.log("extractedInfo: ");
     console.log(extractedInfo);
 
@@ -87,9 +87,16 @@ app.post("/openai", async (req: Request, res: Response) => {
     const applicantName = extractedInfo.applicant_name || "Unknown Name";
     const position = extractedInfo.position || "Unknown Position";
     const company = extractedInfo.company || "Unknown Company";
-    const companyMission = extractedInfo.company_mission || "Unknown Mission";
+    const email = extractedInfo.applicant_email || "Unknown Email";
+    const phoneNumber =
+      extractedInfo.applicant_phone_number || "Unknown Phone Number";
 
-    const firstParagraph = await openai.chat.completions.create({
+    const date = new Date().toLocaleDateString("en-us", {
+      month: "short",
+      day: "numeric",
+    });
+
+    const completion2 = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
@@ -99,25 +106,27 @@ app.post("/openai", async (req: Request, res: Response) => {
         },
         {
           role: "user",
-          content: `Here's the extracted information: ${content1}, 
+          content: `Here's the extracted information: ${extractedInfoJSON}, 
           fill in the field of the paragraph of my cover letter, strictly follow the structure:
 
           I am excited to apply for [ position ] for the [Company Name]. 
           The role aligns perfectly with my skills and aspirations, 
           espacially in [ company  mission ], a field that strongly interests me. 
           [Company Name]'s focus on [ position task ] resonates with my passion - 
-          [ related experience and enthusiasm ], 
-          and I am eager to contribute while growing with your team.
+          [ related experience and enthusiasm ], and I am eager to contribute while growing with your team.
            `,
         },
       ],
     });
 
-    const content2 = firstParagraph.choices?.[0].message?.content ?? "";
-    console.log("content2: ");
-    console.log(content2);
+    const firstParagraoh = completion2.choices?.[0].message?.content ?? "";
+    console.log("firstParagraoh: ");
+    console.log(firstParagraoh);
 
-    res.json({ extractedInfo: content1, coverLetter: content2 });
+    res.json({
+      extractedInfo: extractedInfoJSON,
+      firstParagraoh: firstParagraoh,
+    });
 
     const doc = new Document({
       sections: [
@@ -125,55 +134,91 @@ app.post("/openai", async (req: Request, res: Response) => {
           properties: {},
           children: [
             new Paragraph({
-              heading: HeadingLevel.HEADING_1, // 設定標題等級
+              heading: HeadingLevel.HEADING_1,
               children: [
                 new TextRun({
-                  text: applicantName, // 文字內容
-                  bold: true, // 設定加粗
-                  font: "Calibri", // 設定字體
+                  text: applicantName,
+                  bold: true,
+                  font: "Calibri",
                   color: "000000",
                 }),
               ],
             }),
-            // new Paragraph({
-            //   heading: HeadingLevel.HEADING_3, // 設定標題等級
-            //   children: [
-            //     new TextRun({
-            //       text: position, // 文字內容
-            //       bold: true, // 設定加粗
-            //       font: "Calibri", // 設定字體
-            //       allCaps: true,
-            //       color: "787D7B", // 設定全大寫
-            //     }),
-            //   ],
-            // }),
-            // new Paragraph({}),
-            // new Paragraph({
-            //   children: [new TextRun({ text: date })],
-            // }),
-            // new Paragraph({}),
-            // new Paragraph({
-            //   children: [
-            //     new TextRun({
-            //       text: `To the hiring team at ${companyName}`,
-            //     }),
-            //   ],
-            // }),
-            // new Paragraph({}),
-            // new Paragraph({
-            //   children: [
-            //     new TextRun(coverLetterContent || "No content generated"),
-            //     new TextRun({ text: applicantName, bold: true }),
-            //     new TextRun({
-            //       text: "Foo Bar",
-            //       bold: true,
-            //     }),
-            //     new TextRun({
-            //       text: "\tGithub is the best",
-            //       bold: true,
-            //     }),
-            //   ],
-            // }),
+            new Paragraph({
+              heading: HeadingLevel.HEADING_3,
+              children: [
+                new TextRun({
+                  text: position,
+                  bold: true,
+                  font: "Calibri",
+                  allCaps: true,
+                  color: "787D7B",
+                }),
+              ],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [new TextRun({ text: date })],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `To the hiring team at ${company}`,
+                }),
+              ],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: firstParagraoh || "No content generated",
+                }),
+              ],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `Please let me know a convenient time to connect—I’m excited to explore how I can contribute to your team’s success.`,
+                }),
+              ],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `Thank you,`,
+                }),
+              ],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: applicantName,
+                }),
+              ],
+            }),
+            new Paragraph({
+              children: [
+                new docx.ExternalHyperlink({
+                  children: [
+                    new TextRun({
+                      text: email,
+                      style: "Hyperlink",
+                    }),
+                  ],
+                  link: email,
+                }),
+                new TextRun({
+                  text: " ",
+                }),
+                new TextRun({
+                  text: phoneNumber,
+                }),
+              ],
+            }),
           ],
         },
       ],
