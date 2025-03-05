@@ -60,6 +60,7 @@ app.post("/openai", async (req: Request, res: Response) => {
         "position_task": "Position's task",
         "related_experience_1": {
         "title": "title",
+        "brief-introduction": "brief introduction of the experience, only in one sentence",
         "skill": "skills, experiences align with company’s needs",
         "key-achievement": "Key achievement in this experience",
         "relevant-skill-or-experience": "Relevant skill or experience",
@@ -101,8 +102,7 @@ app.post("/openai", async (req: Request, res: Response) => {
       messages: [
         {
           role: "system",
-          content:
-            "You are going to help me generate the first paragraph of my cover letter.",
+          content: "You are a cover letter generator.",
         },
         {
           role: "user",
@@ -123,9 +123,35 @@ app.post("/openai", async (req: Request, res: Response) => {
     console.log("firstParagraoh: ");
     console.log(firstParagraoh);
 
+    const completion3 = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: "You are a cover letter generator.",
+        },
+        {
+          role: "user",
+          content: `Here's the extracted information: ${extractedInfoJSON},
+          fill in the field of the paragraph of my cover letter, strictly follow the structure, end with "includes:", I will manually add bullet point after this:
+
+          I am a [ related_experience_1.title ] who recently [related_experience_1.brief-introduction].
+          This experience strengthened my [ related_experience_1.skill] and deepened my passion for solving practical challenges.
+          A specific achievement from my previous experience that I believe can add value to the [ position ] at [Company Name] includes:
+           `,
+        },
+      ],
+    });
+
+    const secondParagraph = completion3.choices?.[0].message?.content ?? "";
+
+    console.log("secondParagraph: ");
+    console.log(secondParagraph);
+
     res.json({
       extractedInfo: extractedInfoJSON,
       firstParagraoh: firstParagraoh,
+      secondParagraph: secondParagraph,
     });
 
     const doc = new Document({
@@ -173,6 +199,14 @@ app.post("/openai", async (req: Request, res: Response) => {
               children: [
                 new TextRun({
                   text: firstParagraoh || "No content generated",
+                }),
+              ],
+            }),
+            new Paragraph({}),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: secondParagraph || "No content generated",
                 }),
               ],
             }),

@@ -109,10 +109,6 @@ function App() {
           "response.data.extractedInfo:" + response.data.extractedInfo
         );
 
-        // setResult(response.data);
-
-        // console.log("result");
-        // console.log(result);
         setLoadingGif(false);
         setShowIcon((prev) => !prev);
       } else {
