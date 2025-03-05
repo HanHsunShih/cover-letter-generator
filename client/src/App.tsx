@@ -9,7 +9,7 @@ import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
 import "pdfjs-dist/legacy/build/pdf.worker";
 
 function App() {
-  const [result, setResult] = useState("");
+  const [result, _setResult] = useState("");
   const [showIcon, setShowIcon] = useState(false);
   const jdInput = useRef<HTMLTextAreaElement>(null);
   const cvInput = useRef<HTMLInputElement>(null);
