@@ -1,18 +1,28 @@
 # Cover Letter Generator
 
+
 ## Live DEMO
 https://amys-cover-letter-generator.netlify.app/
 
-![Image](https://github.com/user-attachments/assets/e32e8c28-27e1-49b1-9ae4-53a5d979a849)
+Generate bespoke cover letter by only 2 steps! 
+1. Paste job description
+2. upload resume
+
+
 
 A bespoke AI-powered resume generator using React, Node.js, and OpenAI API, streamlining the job application process. Enabled automated PDF resume analysis and job description matching, generating tailored Word documents for seamless downloads.
 
-<img width="635" alt="Image" src="https://github.com/user-attachments/assets/9f363460-80b3-43ed-aa55-a7d835f7e822" />
+![Image](https://github.com/user-attachments/assets/9cdefec6-a59c-4f27-8e23-05f5e54cba05)
+<img width="635" alt="Image" src="https://github.com/user-attachments/assets/0e850478-60c5-47d3-a611-35c17826dca0" />
+
 
 ## About this project
 Recently I'm actively searching for a job and noticed many companies require a cover letter to showcase my passion and willingness to work with them. I always need to carefully read the job description, combine key points with my experience and passion, spending approximately 1 hour on each letter.
 
 So, I decided to solve this problem using my technical skills 🤓. In this project, users can paste a job description and upload their CV. Using the OpenAI API, the app generates a bespoke cover letter tailored to the job.
+
+<img width="635" alt="Image" src="https://github.com/user-attachments/assets/9f363460-80b3-43ed-aa55-a7d835f7e822" />
+
 
 ## Features
 - Convert the user-uploaded resume from PDF to an ArrayBuffer using the npm package [pdfjs-dist](https://www.npmjs.com/package/pdfjs-dist)
@@ -60,4 +70,4 @@ So, I decided to solve this problem using my technical skills 🤓. In this proj
 1. Paste the job description into the provided field.
 2. Upload your resume (CV).
 3. Click "Generate" to create a bespoke cover letter.
-4. Download your generated cover letter as a Word document.
+4. Download your generated cover letter as a Word document to your download folder.
