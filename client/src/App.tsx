@@ -101,7 +101,7 @@ function App() {
         const cvResponse = await readFileAsText(file!);
         const extractText = cvResponse.join("");
 
-        const response = await axios.post(`${apiUrl}/openai`, {
+        await axios.post(`${apiUrl}/openai`, {
           jobDescription: jdInput.current?.value,
           cvContent: extractText,
         });
