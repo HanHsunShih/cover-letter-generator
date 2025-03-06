@@ -1,5 +1,8 @@
 # Cover Letter Generator
 
+## Live DEMO
+https://amys-cover-letter-generator.netlify.app/
+
 A bespoke AI-powered resume generator using React, Node.js, and OpenAI API, streamlining the job application process. Enabled automated PDF resume analysis and job description matching, generating tailored Word documents for seamless downloads.
 
 <img width="635" alt="Image" src="https://github.com/user-attachments/assets/9f363460-80b3-43ed-aa55-a7d835f7e822" />
@@ -27,6 +30,29 @@ So, I decided to solve this problem using my technical skills 🤓. In this proj
   <a href="https://postman.com" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/getpostman/getpostman-icon.svg" alt="postman" width="40" height="40"/> </a> 
   <a href="https://git-scm.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" alt="git" width="40" height="40"/> </a> 
 </p>
+
+## Getting Started 🚀
+
+### Create your own openAI API key
+- Create new secret key from this [link](https://platform.openai.com/settings/organization/api-keys)
+
+### Prerequisities
+- npm
+  ```
+  npm install npm@latest -g
+  ```
+  
+### Installation
+- clone the repo
+  ```
+  git clone https://github.com/HanHsunShih/cover-letter-generator.git
+  ```
+- install NPM packages
+  ```
+  npm install
+  ```
+- follow the **.env.sample** file to create the .env file
+
 
 ## Usage
 1. Paste the job description into the provided field.
