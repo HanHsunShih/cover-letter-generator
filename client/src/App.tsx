@@ -17,6 +17,7 @@ function App() {
   const [cvErrorMessage, setCvErrorMessage] = useState("");
   const [fileName, setFileName] = useState("");
   const [loadingGif, setLoadingGif] = useState(false);
+  const [generateCount, setGenerateCount] = useState(0);
   const apiUrl = import.meta.env.VITE_SERVER_URL;
 
   const handleJdOnChange = () => {
@@ -105,12 +106,13 @@ function App() {
           cvContent: extractText,
         });
 
-        console.log(
-          "response.data.extractedInfo:" + response.data.extractedInfo
-        );
+        // console.log(
+        //   "response.data.extractedInfo:" + response.data.extractedInfo
+        // );
 
         setLoadingGif(false);
         setShowIcon((prev) => !prev);
+        setGenerateCount(generateCount + 1);
       } else {
         event.preventDefault();
         setShowIcon((prev) => !prev);
@@ -217,6 +219,10 @@ function App() {
             </a>
           </div>
         )}
+        <div>
+          <h3>All time generated cover letters: {generateCount}</h3>
+          {/* <p>{generateCount}</p> */}
+        </div>
       </div>
     </>
   );
