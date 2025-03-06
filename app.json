@@ -2,7 +2,7 @@
   "name": "cover-letter-generator",
   "description": "Backend for cover letter generator",
   "scripts": {
-    "postdeploy": "npm install --prefix server && npm start --prefix server"
+    "postdeploy": "cd server && npm install && npm run build && npm start"
   },
   "env": {
     "NODE_ENV": "production"
