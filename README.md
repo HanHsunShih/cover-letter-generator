@@ -3,6 +3,8 @@
 ## Live DEMO
 https://amys-cover-letter-generator.netlify.app/
 
+![Image](https://github.com/user-attachments/assets/e32e8c28-27e1-49b1-9ae4-53a5d979a849)
+
 A bespoke AI-powered resume generator using React, Node.js, and OpenAI API, streamlining the job application process. Enabled automated PDF resume analysis and job description matching, generating tailored Word documents for seamless downloads.
 
 <img width="635" alt="Image" src="https://github.com/user-attachments/assets/9f363460-80b3-43ed-aa55-a7d835f7e822" />
