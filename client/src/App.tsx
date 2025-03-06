@@ -167,12 +167,9 @@ function App() {
               onChange={handleJdOnChange}
             />
             <p className="form__error-message">{jdErrorMessage || "\u00A0"}</p>
-
-            {/* {jdErrorMessage && (
-              <p className="form__error-message">{jdErrorMessage}</p>
-            )} */}
             <label htmlFor="resumeSubmitted" className="form-group__label">
               Choose your CV from device
+              <br /> {`( PDF only )`}
             </label>
             <label htmlFor="resumeSubmitted" className="form-group__file-label">
               {fileName ? `Change File` : `Choose file`}
@@ -221,7 +218,6 @@ function App() {
         )}
         <div>
           <h3>All time generated cover letters: {generateCount}</h3>
-          {/* <p>{generateCount}</p> */}
         </div>
       </div>
     </>
