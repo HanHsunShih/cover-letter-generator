@@ -26,11 +26,24 @@ app.post("/openai", async (req, res) => {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
     const { jobDescription } = req.body;
     const { cvContent } = req.body;
+    const identifyCvContent = cvContent.slice(0, 1000);
+    // console.log("identifyCvContent");
+    // console.log(identifyCvContent);
     if (!jobDescription) {
         res.status(400).json({ error: "Job description is required" });
         return;
     }
     try {
+        const isResume = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+                { role: "system", content: "Resume Identifier" },
+                {
+                    role: "user",
+                    content: `Identify ${identifyCvContent} to see if it is resume, `,
+                },
+            ],
+        });
         const completion1 = await openai.chat.completions.create({
             model: "gpt-4o-mini",
             messages: [
@@ -65,14 +78,8 @@ app.post("/openai", async (req, res) => {
                 },
             ],
         });
-        // 解析 JSON 內容
         const extractedInfoJSON = (_d = (_c = (_b = (_a = completion1.choices) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.message) === null || _c === void 0 ? void 0 : _c.content) !== null && _d !== void 0 ? _d : "";
-        // console.log("content1: ");
-        // console.log(content1);
         const extractedInfo = JSON.parse(extractedInfoJSON);
-        console.log("extractedInfo: ");
-        console.log(extractedInfo);
-        // 讓 extractedInfo 確保有值（如果 API 沒返回值則給預設值）
         const applicantName = extractedInfo.applicant_name || "Unknown Name";
         const position = extractedInfo.position || "Unknown Position";
         const keyAchievement = extractedInfo.related_experience_1.key_achievement ||
@@ -150,8 +157,8 @@ app.post("/openai", async (req, res) => {
             ],
         });
         const thirdParagraph = (_o = (_m = (_l = completion4.choices) === null || _l === void 0 ? void 0 : _l[0].message) === null || _m === void 0 ? void 0 : _m.content) !== null && _o !== void 0 ? _o : "";
-        console.log("thirdParagraph: ");
-        console.log(thirdParagraph);
+        // console.log("thirdParagraph: ");
+        // console.log(thirdParagraph);
         res.json({
             extractedInfo: extractedInfoJSON,
             firstParagraoh: firstParagraoh,
@@ -166,7 +173,7 @@ app.post("/openai", async (req, res) => {
                             size: 24,
                         },
                         paragraph: {
-                            spacing: { after: 200 },
+                            spacing: { after: 200, line: 240 },
                         },
                     },
                 },

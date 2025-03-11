@@ -33,6 +33,10 @@ app.get("/", (req, res) => {
 app.post("/openai", async (req: Request, res: Response) => {
   const { jobDescription } = req.body;
   const { cvContent } = req.body;
+  const identifyCvContent = cvContent.slice(0, 1000);
+
+  // console.log("identifyCvContent");
+  // console.log(identifyCvContent);
 
   if (!jobDescription) {
     res.status(400).json({ error: "Job description is required" });
@@ -40,6 +44,17 @@ app.post("/openai", async (req: Request, res: Response) => {
   }
 
   try {
+    const isResume = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "Resume Identifier" },
+        {
+          role: "user",
+          content: `Identify ${identifyCvContent} to see if it is resume, `,
+        },
+      ],
+    });
+
     const completion1 = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -75,16 +90,9 @@ app.post("/openai", async (req: Request, res: Response) => {
       ],
     });
 
-    // 解析 JSON 內容
     const extractedInfoJSON = completion1.choices?.[0]?.message?.content ?? "";
-    // console.log("content1: ");
-    // console.log(content1);
-
     const extractedInfo = JSON.parse(extractedInfoJSON);
-    console.log("extractedInfo: ");
-    console.log(extractedInfo);
 
-    // 讓 extractedInfo 確保有值（如果 API 沒返回值則給預設值）
     const applicantName = extractedInfo.applicant_name || "Unknown Name";
     const position = extractedInfo.position || "Unknown Position";
     const keyAchievement =
@@ -178,8 +186,8 @@ app.post("/openai", async (req: Request, res: Response) => {
 
     const thirdParagraph = completion4.choices?.[0].message?.content ?? "";
 
-    console.log("thirdParagraph: ");
-    console.log(thirdParagraph);
+    // console.log("thirdParagraph: ");
+    // console.log(thirdParagraph);
 
     res.json({
       extractedInfo: extractedInfoJSON,
@@ -196,7 +204,7 @@ app.post("/openai", async (req: Request, res: Response) => {
               size: 24,
             },
             paragraph: {
-              spacing: { after: 200 },
+              spacing: { after: 200, line: 240 },
             },
           },
         },

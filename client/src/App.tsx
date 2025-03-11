@@ -150,7 +150,7 @@ function App() {
     <>
       <div className="container">
         <header className="header">
-          <h1 className="header__title">Resume Generator</h1>
+          <h1 className="header__title">Cover Letter Generator</h1>
         </header>
         <form action="" className="form" onSubmit={handleSubmitForm}>
           <div className="form-group">
