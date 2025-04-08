@@ -1,31 +1,24 @@
-@font-face {
-  font-family: "RokkittBold";
-  src: url("fonts/Rokkitt-Bold.ttf") format("truetype");
-  font-weight: bold;
-}
+// @font-face {
+//   font-family: "RokkittBold";
+//   src: url("fonts/Rokkitt-Bold.ttf") format("truetype");
+//   font-weight: bold;
+// }
 
-@font-face {
-  font-family: "RokkittLight";
-  src: url("fonts/Rokkitt-Light.ttf") format("truetype");
-  font-weight: lighter;
-}
+// @font-face {
+//   font-family: "RokkittLight";
+//   src: url("fonts/Rokkitt-Light.ttf") format("truetype");
+//   font-weight: lighter;
+// }
 
-h1 {
-  font-family: "RokkittBold", sans-serif;
-}
-
+h1,
 h3 {
-  font-family: "RokkittBold", sans-serif;
+  font-family: "Rokkitt", sans-serif;
+  font-weight: 700;
 }
 
-p {
-  font-family: "RokkittLight", sans-serif;
-}
-
-label {
-  font-family: "RokkittLight", sans-serif;
-}
-
+p,
+label,
 button {
-  font-family: "RokkittLight", sans-serif;
+  font-family: "Rokkitt", sans-serif;
+  font-weight: 400;
 }
