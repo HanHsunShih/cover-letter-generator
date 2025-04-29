@@ -30,13 +30,12 @@ app.get("/", (req, res) => {
   res.send("Welcome to my API");
 });
 
+app.post("/generate_count", (req, res) => {});
+
 app.post("/openai", async (req: Request, res: Response) => {
   const { jobDescription } = req.body;
   const { cvContent } = req.body;
   const identifyCvContent = cvContent.slice(0, 1000);
-
-  // console.log("identifyCvContent");
-  // console.log(identifyCvContent);
 
   if (!jobDescription) {
     res.status(400).json({ error: "Job description is required" });
