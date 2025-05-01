@@ -15,7 +15,6 @@ export default {
     },
     migrations: {
       directory: "./migrations",
-      extension: "ts",
     },
   },
 };
