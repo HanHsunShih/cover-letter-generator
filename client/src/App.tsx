@@ -1,7 +1,7 @@
 import "./App.scss";
 import axios from "axios";
 import docImg from "./assets/images/doc.png";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 // @ts-ignore
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
@@ -109,6 +109,7 @@ function App() {
 
           if (openaiResponse.status === 200) {
             await axios.post(`${apiUrl}/generate_count`);
+            await fetchCount();
             setShowIcon((prev) => !prev);
           }
           setLoadingGif(false);
@@ -116,8 +117,6 @@ function App() {
           console.error(error);
           setLoadingGif(false);
         }
-
-        // setGenerateCount(generateCount + 1);
       } else {
         event.preventDefault();
         setShowIcon((prev) => !prev);
@@ -150,6 +149,19 @@ function App() {
       console.error("File download failed:", error);
     }
   };
+
+  const fetchCount = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/count`);
+      setGenerateCount(response.data.total);
+    } catch (error) {
+      console.error("Failed to fetch count", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCount();
+  }, []);
 
   return (
     <>
