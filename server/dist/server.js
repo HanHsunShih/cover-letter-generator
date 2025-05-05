@@ -30,7 +30,6 @@ app.get("/", (req, res) => {
 app.post("/generate_count", async (req, res) => {
     try {
         const created_at = new Date();
-        // await knex("generate_count").insert({ created_at });
         await db("generate_count").insert({ created_at });
         console.log("🥛knex client:", knexConfig.development.client);
         console.log("🧀 client from knex instance:", db.client.config.client);

@@ -101,18 +101,23 @@ function App() {
         const cvResponse = await readFileAsText(file!);
         const extractText = cvResponse.join("");
 
-        await axios.post(`${apiUrl}/openai`, {
-          jobDescription: jdInput.current?.value,
-          cvContent: extractText,
-        });
+        try {
+          const openaiResponse = await axios.post(`${apiUrl}/openai`, {
+            jobDescription: jdInput.current?.value,
+            cvContent: extractText,
+          });
 
-        // console.log(
-        //   "response.data.extractedInfo:" + response.data.extractedInfo
-        // );
+          if (openaiResponse.status === 200) {
+            await axios.post(`${apiUrl}/generate_count`);
+            setShowIcon((prev) => !prev);
+          }
+          setLoadingGif(false);
+        } catch (error) {
+          console.error(error);
+          setLoadingGif(false);
+        }
 
-        setLoadingGif(false);
-        setShowIcon((prev) => !prev);
-        setGenerateCount(generateCount + 1);
+        // setGenerateCount(generateCount + 1);
       } else {
         event.preventDefault();
         setShowIcon((prev) => !prev);
