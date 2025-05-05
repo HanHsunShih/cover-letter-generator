@@ -6,7 +6,7 @@ import "dotenv/config";
  */
 export default {
   development: {
-    client: "pg",
+    client: process.env.DB_CLIENT || "pg",
     connection: {
       host: process.env.DB_HOST,
       database: process.env.DB_NAME,

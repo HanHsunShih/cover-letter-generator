@@ -9,10 +9,15 @@ import { Document, Packer, Paragraph, TextRun } from "docx";
 import path from "path";
 import { fileURLToPath } from "url";
 import { HeadingLevel } from "docx";
+import knex from "knex";
+// knexfile.js
+// @ts-ignore
+import knexConfig from "../knexfile.js";
 
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
+const db = knex(knexConfig.development);
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY as string,
@@ -30,7 +35,23 @@ app.get("/", (req, res) => {
   res.send("Welcome to my API");
 });
 
-app.post("/generate_count", (req, res) => {});
+app.post("/generate_count", async (req, res) => {
+  try {
+    const created_at = new Date();
+
+    // await knex("generate_count").insert({ created_at });
+    await db("generate_count").insert({ created_at });
+    console.log("🥛knex client:", knexConfig.development.client);
+
+    console.log("🧀 client from knex instance:", db.client.config.client);
+
+    res.status(201).json({ message: "Record inserted" });
+  } catch (error) {
+    console.log("🐰 client from knex instance:", db.client.config.client);
+    console.error("Insert error:", error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
 
 app.post("/openai", async (req: Request, res: Response) => {
   const { jobDescription } = req.body;
