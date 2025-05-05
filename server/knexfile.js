@@ -16,5 +16,8 @@ export default {
     migrations: {
       directory: "./migrations",
     },
+    seeds: {
+      directory: "./seeds",
+    },
   },
 };

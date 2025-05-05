@@ -31,14 +31,22 @@ app.post("/generate_count", async (req, res) => {
     try {
         const created_at = new Date();
         await db("generate_count").insert({ created_at });
-        console.log("🥛knex client:", knexConfig.development.client);
-        console.log("🧀 client from knex instance:", db.client.config.client);
         res.status(201).json({ message: "Record inserted" });
     }
     catch (error) {
-        console.log("🐰 client from knex instance:", db.client.config.client);
         console.error("Insert error:", error);
         res.status(500).json({ error: "Something went wrong" });
+    }
+});
+app.get("/count", async (req, res) => {
+    try {
+        const result = (await db("generate_count").count("id as total"));
+        const total = result[0].total;
+        res.json({ total });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to get count" });
     }
 });
 app.post("/openai", async (req, res) => {

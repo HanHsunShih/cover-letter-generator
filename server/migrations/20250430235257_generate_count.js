@@ -3,8 +3,6 @@
  * @returns { Promise<void> }
  */
 export function up(knex) {
-  console.log("🍗Running migration with client:", knex.client.config.client);
-
   return knex.schema.createTable("generate_count", (table) => {
     table.increments("id");
     table.timestamp("created_at");
